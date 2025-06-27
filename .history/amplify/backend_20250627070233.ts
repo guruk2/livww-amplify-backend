@@ -143,7 +143,10 @@ const exportBucket = new s3.Bucket(functionStack, 'DailyExportBucket', {
 // ==================== MESSAGING & MONITORING ====================
 
 // Create a Dead-Letter Queue
-
+const syncDlq = new sqs.Queue(functionStack, 'SyncDLQ', {
+  queueName: naming.resource('sync-dlq'),
+  removalPolicy: envConfig.resources.dynamodb.removalPolicy
+});
 
 // Create an SNS Topic for alerts
 const alertTopic = new sns.Topic(functionStack, 'AlertTopic', {

@@ -8,6 +8,7 @@ import * as sns from 'aws-cdk-lib/aws-sns';
 import * as cw_actions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as apigw from 'aws-cdk-lib/aws-apigateway';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
 import * as logs from 'aws-cdk-lib/aws-logs';
@@ -143,7 +144,10 @@ const exportBucket = new s3.Bucket(functionStack, 'DailyExportBucket', {
 // ==================== MESSAGING & MONITORING ====================
 
 // Create a Dead-Letter Queue
-
+const syncDlq = new sqs.Queue(functionStack, 'SyncDLQ', {
+  queueName: naming.resource('sync-dlq'),
+  removalPolicy: envConfig.resources.dynamodb.removalPolicy
+});
 
 // Create an SNS Topic for alerts
 const alertTopic = new sns.Topic(functionStack, 'AlertTopic', {
